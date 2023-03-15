@@ -96,6 +96,25 @@ def extractAndSave(rois:np.ndarray, img:np.ndarray, name: str, path: str, deriva
     
     np.save(path+f"/dict-{name}", np.array(dictArr))
 
+def XYWHtominmaxXY(roiArray: np.ndarray) -> np.ndarray:
+    if roiArray.shape[1] != 4:
+        raise Exception('Roi array must be with dim [n,4], n being the number of roi')
+    
+    #replace WH to min XY + WH = max XY
+    roiArray[:,2:] = roiArray[:,:2] + roiArray[:,2:]
+    
+    return roiArray
+
+def minmaxXYtoXYWH(roiArray: np.ndarray) -> np.ndarray:
+    if roiArray.shape[1] != 4:
+        raise Exception('Roi array must be with dim [n,4], n being the number of roi')
+    
+    #replace max XY to max XY - min XY = WH
+    roiArray[:,2:] =  roiArray[:,2:] - roiArray[:,:2]
+    
+    return roiArray
+
+
 ##### Regions of interest - display function #####
 
 def drawBoundingBox(rois: np.ndarray, img: np.ndarray) -> None:
