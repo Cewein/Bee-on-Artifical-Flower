@@ -117,20 +117,34 @@ def minmaxXYtoXYWH(roiArray: np.ndarray) -> np.ndarray:
 
 ##### Regions of interest - display function #####
 
-def drawBoundingBox(rois: np.ndarray, img: np.ndarray) -> None:
+def drawBoundingBox(img: np.ndarray, rois: np.ndarray, categories: list) -> None:
 
     # Create figure and axes
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(15, 15))
 
     # Display the image
     ax.imshow(img)
 
     for i in range(len(rois)):
+        
+        id = rois[i][1]
+        colors = ['g','w','orange','b']
+
+        x,y,w,h = rois[i][2], rois[i][3], rois[i][4], rois[i][5]
+
         # Create a Rectangle patch
-        rect = patches.Rectangle((rois[i][0], rois[i][1]), rois[i][2], rois[i][3], linewidth=1, edgecolor='r', facecolor='none')
+        rect = patches.Rectangle((x,y),w,h, linewidth=1, edgecolor=colors[id], facecolor='none')
 
         # Add the patch to the Axes
         ax.add_patch(rect)
+        ax.text(
+            x,
+            y,
+            categories[id],
+            bbox={"facecolor": colors[id], "alpha": 0.4},
+            clip_box=ax.clipbox,
+            clip_on=True,
+            fontsize='xx-small'
+        )
 
     plt.show()
-    return

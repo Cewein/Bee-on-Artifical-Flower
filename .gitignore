@@ -5,6 +5,8 @@ __pycache__/
 
 /INat
 /logs
+/out
+/dataset/video
 
 # C extensions
 *.so
