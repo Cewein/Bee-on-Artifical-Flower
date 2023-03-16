@@ -11,11 +11,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import skimage as ski
 # %% path to the data
-videoPath = "video/MAH00060.MP4"
+videoPath = "video/MAH00065.MP4"
 roiPath = "dataset/roi-3.npy"
 
-#%% load the data
 firstFrame = dt.openFirstFrame(videoPath)
+plt.imsave("frame-vid2.png",firstFrame)
 roiData = np.load(roiPath)
 
 #display the bounding boxes
@@ -42,7 +42,7 @@ centers = np.hstack((centers,ones))
 centerswarp = tfmat@centers.T
 centerswarp = centerswarp.T
 
-ax[0].plot(centerswarp[:, 0], centerswarp[:, 1], '.g',ms=30)
+ax[1].plot(centerswarp[:, 0], centerswarp[:, 1], '.r',ms=30)
 
 
 ax[1].imshow(warped, cmap=plt.cm.gray)
