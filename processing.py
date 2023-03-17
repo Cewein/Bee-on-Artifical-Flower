@@ -12,7 +12,7 @@ def thresholdingRGB(img: np.ndarray) -> np.ndarray:
     bTresh = skimage.filters.threshold_minimum(b)
 
     r[r < rTresh] = 0
-    g[g < rTresh] = 0
-    b[b < rTresh] = 0
+    g[g < gTresh] = 0
+    b[b < bTresh] = 0
 
     return np.dstack((r,g,b))

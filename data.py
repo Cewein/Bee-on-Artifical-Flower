@@ -148,3 +148,22 @@ def drawBoundingBox(img: np.ndarray, rois: np.ndarray, categories: list) -> None
         )
 
     plt.show()
+
+
+### DATA AUGMENTATION
+
+def randomResizeImg(x):
+    width = x.shape[0]
+    height = x.shape[1]
+    factor = tf.random.uniform([],0.2,1.2)
+    return tf.image.resize(x, [width*factor, height*factor])
+
+def randomResize():
+    return layers.Lambda(lambda x: randomResizeImg(x))
+
+dataAugmentation = tf.keras.Sequential([
+    layers.RandomBrightness(0.4, (0.0,1.0)),
+    layers.RandomFlip("horizontal_and_vertical"),
+    layers.RandomRotation(0.1,"nearest"),
+    randomResize()
+    ])

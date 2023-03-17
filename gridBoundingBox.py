@@ -16,7 +16,7 @@ videoPath = "video/MAH00060.MP4"
 cocoJsonPath = "BAF-COCO-1.json"
 datasetPath = "dataset/"
 
-imgIndex = 0
+imgIndex = 2
 
 jsonDict = ocf.openCocoFile('dataset/BAF-COCO-1.json')
 c,i,a = ocf.jsonToArray(jsonDict)
@@ -28,3 +28,4 @@ firstFrame = plt.imread(datasetPath+i[imgIndex])
 dt.drawBoundingBox(firstFrame, a[a[:,0] == imgIndex], c)
 
 # %
+# %%
