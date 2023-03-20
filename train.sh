@@ -28,7 +28,7 @@ cyw6='../training/yolov7-w6-custom.yaml'
 cydf='../training/yolov7-custom.yaml'
 
 #choose between two type of training
-if [$p = 'p5']
+if [ $p == 'p5' ]
 then
     wget -nc https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7_training.pt
     python train.py --workers 8 --device 0 --batch-size 32 --data $cy --img 640 640 --cfg $cydf --weights 'yolov7_training.pt' --name yolov7-custom --hyp data/hyp.scratch.custom.yaml
