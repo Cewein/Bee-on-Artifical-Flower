@@ -6,11 +6,18 @@ git submodule update
 
 #download the dataset
 d='./baf/' # unzip directory
-url=https://app.roboflow.com/ds/9h5VNVqe1R?key=0kT6Sm7Cxw
-f='BAF.v4-default.yolov7pytorch.zip'
 
-echo 'downloading' $f
-curl -L $url -o $f && unzip -q $f -d $d && rm $f
+
+if [ -d "./baf/" ] 
+then
+    echo "Directory $d exists. skiping database download" 
+else
+    url=https://app.roboflow.com/ds/9h5VNVqe1R?key=0kT6Sm7Cxw
+    f='BAF.v4-default.yolov7pytorch.zip'
+
+    echo 'downloading' $f
+    curl -L $url -o $f && unzip -q $f -d $d && rm $f
+fi
 
 #go into the dataset for training
 cd yolov7
@@ -21,7 +28,8 @@ cyw6='../training/yolov7-w6-custom.yaml'
 cydf='../training/yolov7-custom.yaml'
 
 #choose between two type of training
-if [$p=='p5']; then
+if [$p = 'p5']
+then
     wget -nc https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7_training.pt
     python train.py --workers 8 --device 0 --batch-size 32 --data $cy --img 640 640 --cfg $cydf --weights 'yolov7_training.pt' --name yolov7-custom --hyp data/hyp.scratch.custom.yaml
 else
