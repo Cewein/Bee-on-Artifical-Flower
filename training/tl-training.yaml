@@ -1,0 +1,7 @@
+#To be use in the yolov7 folder
+train: ../baf/train/images
+val: ../baf/valid/images
+test: ../baf/test/images
+
+nc: 3
+names: ['blue-flower', 'orange-flower', 'white-flower']
