@@ -12,8 +12,8 @@ if [ -d "./baf/" ]
 then
     echo "Directory $d exists. skiping database download" 
 else
-    url=https://app.roboflow.com/ds/9h5VNVqe1R?key=0kT6Sm7Cxw
-    f='BAF.v4-default.yolov7pytorch.zip'
+    url=https://app.roboflow.com/ds/4TadDrWzxR?key=YBmMXGBZ62
+    f='BAF.yolov7pytorch.zip'
 
     echo 'downloading' $f
     curl -L $url -o $f && unzip -q $f -d $d && rm $f
