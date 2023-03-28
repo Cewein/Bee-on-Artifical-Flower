@@ -1,5 +1,5 @@
 import cv2 as cv
-import skvideo.io
+import ffmpeg
 
 import numpy as np
 
@@ -9,9 +9,26 @@ import matplotlib.patches as patches
 
 ##### Video processing #####
 # open a video
-def openFirstFrame(src: str) -> np.ndarray:
-    return skvideo.io.vread(src, num_frames=1)[0]
+def openFrame(src: str, frame_num: int) -> np.ndarray:
+    probe = ffmpeg.probe(src)
+    video_info = next(s for s in probe['streams'] if s['codec_type'] == 'video')
+    width = int(video_info['width'])
+    height = int(video_info['height'])
+    num_frames = int(video_info['nb_frames'])
 
+    out, err = (
+        ffmpeg
+        .input(src)
+        .output('pipe:', format='rawvideo', pix_fmt='rgb24')
+        .run(capture_stdout=True)
+    )
+    video = (
+        np
+        .frombuffer(out, np.uint8)
+        .reshape([-1, height, width, 3])
+    )
+
+    return video[frame_num,:,:,:]
 
 
 ##### Regions of interest #####
@@ -142,28 +159,9 @@ def drawBoundingBox(img: np.ndarray, rois: np.ndarray, categories: list) -> None
             y,
             categories[id],
             bbox={"facecolor": colors[id], "alpha": 0.4},
-            clip_box=ax.clipbox,
+            clip_box=ax.clipbox, # type: ignore
             clip_on=True,
             fontsize='xx-small'
         )
 
     plt.show()
-
-
-### DATA AUGMENTATION
-
-def randomResizeImg(x):
-    width = x.shape[0]
-    height = x.shape[1]
-    factor = tf.random.uniform([],0.2,1.2)
-    return tf.image.resize(x, [width*factor, height*factor])
-
-def randomResize():
-    return layers.Lambda(lambda x: randomResizeImg(x))
-
-dataAugmentation = tf.keras.Sequential([
-    layers.RandomBrightness(0.4, (0.0,1.0)),
-    layers.RandomFlip("horizontal_and_vertical"),
-    layers.RandomRotation(0.1,"nearest"),
-    randomResize()
-    ])

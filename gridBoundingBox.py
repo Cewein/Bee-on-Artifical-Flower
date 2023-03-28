@@ -2,6 +2,7 @@
 %load_ext autoreload
 %autoreload 2
 
+
 import geometry as gm
 import data as dt
 import openCocoFormat as ocf
@@ -14,11 +15,11 @@ import skimage as ski
 # %% path to the data
 videoPath = "video/MAH00060.MP4"
 cocoJsonPath = "BAF-COCO-1.json"
-datasetPath = "dataset/"
+datasetPath = "dataset/images/"
 
 imgIndex = 2
 
-jsonDict = ocf.openCocoFile('dataset/BAF-COCO-1.json')
+jsonDict = ocf.openCocoFile('dataset/annotations/BAF-COCO-1.json')
 c,i,a = ocf.jsonToArray(jsonDict)
 
 
@@ -28,4 +29,10 @@ firstFrame = plt.imread(datasetPath+i[imgIndex])
 dt.drawBoundingBox(firstFrame, a[a[:,0] == imgIndex], c)
 
 # %
+# %%
+
+img = dt.openFrame("dataset/video/MAH00060.MP4", 10)
+plt.imshow(img)
+
+
 # %%
