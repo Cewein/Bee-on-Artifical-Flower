@@ -1,16 +1,9 @@
 import cv2 as cv
-import imageio.v3 as iio
 
 import numpy as np
 
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-
-
-##### Video processing #####
-# open a video
-def openFrame(src: str, frame_num: int) -> np.ndarray:
-    return iio.imread(src,index=frame_num,plugin="pyav")
 
 
 ##### Regions of interest #####
@@ -94,62 +87,3 @@ def extractAndSave(rois:np.ndarray, img:np.ndarray, name: str, path: str, deriva
         plt.imsave(path + filename,subPic)
     
     np.save(path+f"/dict-{name}", np.array(dictArr))
-
-def XYWHtominmaxXY(roiArray: np.ndarray) -> np.ndarray:
-    if roiArray.shape[1] != 4:
-        raise Exception('Roi array must be with dim [n,4], n being the number of roi')
-    
-    #replace WH to min XY + WH = max XY
-    roiArray[:,2:] = roiArray[:,:2] + roiArray[:,2:]
-    
-    return roiArray
-
-def minmaxXYtoXYWH(roiArray: np.ndarray) -> np.ndarray:
-    if roiArray.shape[1] != 4:
-        raise Exception('Roi array must be with dim [n,4], n being the number of roi')
-    
-    #replace max XY to max XY - min XY = WH
-    roiArray[:,2:] =  roiArray[:,2:] - roiArray[:,:2]
-    
-    return roiArray
-
-
-##### Regions of interest - display function #####
-
-def drawBoundingBox(img: np.ndarray, rois: np.ndarray, categories: list) -> None:
-
-    # Create figure and axes
-    fig, ax = plt.subplots(figsize=(15, 15))
-
-    # Display the image
-    ax.imshow(img)
-
-    resolutionY,resolutionX,_ = img.shape
-
-    for i in range(len(rois)):
-        
-        id = np.int32(rois[i][0])
-        colors = ['b','orange','w']
-
-        w = np.int32(rois[i][3] * resolutionX)
-        h = np.int32(rois[i][4] * resolutionY)
-
-        x = np.int32(rois[i][1] * resolutionX - w/2)
-        y = np.int32(rois[i][2] * resolutionY - h/2)
-
-        # Create a Rectangle patch
-        rect = patches.Rectangle((x,y),w,h, linewidth=1, edgecolor=colors[id], facecolor='none')
-
-        # Add the patch to the Axes
-        ax.add_patch(rect)
-        ax.text(
-            x,
-            y,
-            categories[id],
-            bbox={"facecolor": colors[id], "alpha": 0.4},
-            clip_box=ax.clipbox, # type: ignore
-            clip_on=True,
-            fontsize='xx-small'
-        )
-
-    plt.show()
