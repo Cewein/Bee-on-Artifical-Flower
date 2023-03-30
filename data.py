@@ -1,5 +1,5 @@
 import cv2 as cv
-import ffmpeg
+import imageio.v3 as iio
 
 import numpy as np
 
@@ -10,25 +10,7 @@ import matplotlib.patches as patches
 ##### Video processing #####
 # open a video
 def openFrame(src: str, frame_num: int) -> np.ndarray:
-    probe = ffmpeg.probe(src)
-    video_info = next(s for s in probe['streams'] if s['codec_type'] == 'video')
-    width = int(video_info['width'])
-    height = int(video_info['height'])
-    num_frames = int(video_info['nb_frames'])
-
-    out, err = (
-        ffmpeg
-        .input(src)
-        .output('pipe:', format='rawvideo', pix_fmt='rgb24')
-        .run(capture_stdout=True)
-    )
-    video = (
-        np
-        .frombuffer(out, np.uint8)
-        .reshape([-1, height, width, 3])
-    )
-
-    return video[frame_num,:,:,:]
+    return iio.imread(src,index=frame_num,plugin="pyav")
 
 
 ##### Regions of interest #####
@@ -142,12 +124,18 @@ def drawBoundingBox(img: np.ndarray, rois: np.ndarray, categories: list) -> None
     # Display the image
     ax.imshow(img)
 
+    resolutionY,resolutionX,_ = img.shape
+
     for i in range(len(rois)):
         
-        id = rois[i][1]
-        colors = ['g','w','orange','b']
+        id = np.int32(rois[i][0])
+        colors = ['b','orange','w']
 
-        x,y,w,h = rois[i][2], rois[i][3], rois[i][4], rois[i][5]
+        w = np.int32(rois[i][3] * resolutionX)
+        h = np.int32(rois[i][4] * resolutionY)
+
+        x = np.int32(rois[i][1] * resolutionX - w/2)
+        y = np.int32(rois[i][2] * resolutionY - h/2)
 
         # Create a Rectangle patch
         rect = patches.Rectangle((x,y),w,h, linewidth=1, edgecolor=colors[id], facecolor='none')

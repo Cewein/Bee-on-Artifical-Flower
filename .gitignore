@@ -7,6 +7,7 @@ __pycache__/
 /logs
 /out
 /dataset/video
+/tmp
 
 # C extensions
 *.so
@@ -136,3 +137,4 @@ report/data/custom-yolo(1).zip
 report/data/custom-yolo.zip
 report/data/drive-download-20230322T005545Z-001.zip
 report/data/drive-download-20230322T012908Z-001.zip
+*.pt
