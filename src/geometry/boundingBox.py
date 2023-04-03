@@ -10,7 +10,26 @@ def getBBoxCenter(bboxes: np.ndarray)-> np.ndarray:
     #bbox is in mode minmaxXY
     else:
         return bboxes[:,:2] + ((bboxes[:,2:] - bboxes[:,2:]) // 2)
+    
+def getAllPoints(bboxes: np.ndarray)-> np.ndarray:
+    if bboxes.shape[1] != 4: raise Exception("bboxes must be with dim [n,4], n being the number of bbox")
 
+    #bbox is in mode XYWH
+    if bboxes[0][0] >= bboxes[0][2]:
+        bboxes = XYWHtominmaxXY(bboxes)
+
+    minXY = bboxes[:,:2]
+    maxXY = bboxes[:,2:]
+
+    allPoint = np.array([minXY[:,0],minXY[:,1]])
+
+    allPoint =  np.hstack((allPoint, np.array([maxXY[:,0],minXY[:,1]])))
+    allPoint =  np.hstack((allPoint, np.array([maxXY[:,0],maxXY[:,1]])))
+    allPoint =  np.hstack((allPoint, np.array([minXY[:,0],maxXY[:,1]])))
+    
+    return allPoint
+    
+#need to be in minmaxXY
 def getGridBBox(roiArray: np.ndarray) -> np.ndarray:
     minXY = np.min(roiArray[:,:2], axis=0)
     maxXY = np.max(roiArray[:,2:], axis=0)
@@ -41,11 +60,22 @@ def minmaxXYtoXYWH(BBoxArray: np.ndarray) -> np.ndarray:
     
     return BBoxArray
 
+#change normal space to XYWH inage space
+def normSpaceToImgSpace(BBoxArray: np.ndarray, img: np.ndarray):
+
+    resolutionY,resolutionX,_ = img.shape
+
+    w = np.int32(BBoxArray[:,2] * resolutionX)
+    h = np.int32(BBoxArray[:,3] * resolutionY)
+
+    x = np.int32(BBoxArray[:,0] * resolutionX - w/2)
+    y = np.int32(BBoxArray[:,1] * resolutionY - h/2)
+
+    return np.array([x,y,w,h]).T
+
 ##### display function #####
 
 def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, categories: list) -> None:
-
-    
 
     # Create figure and axes
     fig, ax = plt.subplots(figsize=(15, 15))
@@ -53,18 +83,16 @@ def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, categories: list) -> No
     # Display the image
     ax.imshow(img)
 
-    resolutionY,resolutionX,_ = img.shape
-
     for i in range(len(BBoxs)):
         
         id = np.int32(BBoxs[i][0])
         colors = ['b','orange','w']
 
-        w = np.int32(BBoxs[i][3] * resolutionX)
-        h = np.int32(BBoxs[i][4] * resolutionY)
+        w = BBoxs[i][3]
+        h = BBoxs[i][4]
 
-        x = np.int32(BBoxs[i][1] * resolutionX - w/2)
-        y = np.int32(BBoxs[i][2] * resolutionY - h/2)
+        x = BBoxs[i][1]
+        y = BBoxs[i][2]
 
         # Create a Rectangle patch
         rect = patches.Rectangle((x,y),w,h, linewidth=1, edgecolor=colors[id], facecolor='none')

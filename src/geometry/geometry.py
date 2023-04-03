@@ -20,7 +20,7 @@ def perspectiveTransform(img, points) -> transform.ProjectiveTransform:
     return tform3, warped
 
 #tform3 must precalculated
-def getGridCornesFromPerspective(roiArray: np.ndarray, tform3: transform.ProjectiveTransform) -> np.ndarray:
+def getGridCornesFromPerspective(roiArray: np.ndarray, tform3: transform.ProjectiveTransform = None) -> np.ndarray:
     cornersBbox = boundingBox.getGridBBox(roiArray)
     
     centers = boundingBox.getBBoxCenter(roiArray)
