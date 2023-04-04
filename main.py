@@ -20,8 +20,7 @@ import scipy
 from itertools import combinations
 
 # %% path to the data
-videoPath = "video/MVI_9184.MP4"
-datasetPath = "dataset/"
+videoPath = "dataset/video/MAH00073.MP4"
 frameIndex = 200
 
 # create a tmp dir
@@ -30,7 +29,7 @@ if os.path.exists("tmp/"):
 os.makedirs("tmp/")
 
 #Open and save a frame
-img = video.openFrame(datasetPath+videoPath, frameIndex)
+img = video.openFrame(videoPath, frameIndex)
 plt.imsave("tmp/tmp.png", img)
 
 # yolov7 detection
@@ -59,13 +58,20 @@ p = allPoint.T[hull.vertices,:]
 plt.scatter(p.T[0,:], p.T[1,:])
 plt.plot(p[:, 0], p[:, 1])
 
-q = QBox.markovQuadFinder(p)
+q = QBox.markovQuadFinder(p,10000)
 plt.scatter(q.T[0,:], q.T[1,:])
 plt.plot(q[:, 0], q[:, 1])
-plt.show()
 
+center = np.mean(p,axis=0)
+direction = q - center
+
+qm = np.flip(q + direction*0.05, axis=0)
+
+plt.scatter(qm.T[0,:], qm.T[1,:])
+plt.plot(qm[:, 0], qm[:, 1])
+plt.show()
 # %%
-tform3, warped = geometry.perspectiveTransform(img,q)
+tform3, warped = geometry.perspectiveTransform(img,qm)
 
 plt.imshow(img)
 plt.show()

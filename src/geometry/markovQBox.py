@@ -1,5 +1,7 @@
 #This file describe a way to find the best bouding quadrilate of a perspective warped grid
+from matplotlib import pyplot as plt
 import numpy as np
+from tqdm import tqdm
 from scipy.spatial import ConvexHull
 
 def validatedQuad(p11,p12,p21,p22):
@@ -18,7 +20,7 @@ def validatedQuad(p11,p12,p21,p22):
     
     return None
 
-def markovQuadFinder(hullPoint: np.ndarray, iter=100000):
+def markovQuadFinder(hullPoint: np.ndarray, iter=10000):
 
     id = np.arange(len(hullPoint))
 
@@ -27,7 +29,7 @@ def markovQuadFinder(hullPoint: np.ndarray, iter=100000):
     minArea = -1.0
     saved = None
 
-    for i in range(iter):
+    for i in tqdm(range(iter), disable=True):
         rng.shuffle(id)
         pointId = hullPoint[id[:4],:]
 
@@ -41,6 +43,5 @@ def markovQuadFinder(hullPoint: np.ndarray, iter=100000):
             if minArea < hull.area:
                 minArea = hull.area
                 saved = pointId[hull.vertices,:]
-                print(i,":",minArea, "|", saved)
     
     return saved
