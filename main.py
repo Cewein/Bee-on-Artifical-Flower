@@ -7,6 +7,7 @@ import src.data.video as video
 import src.geometry.boundingBox as BBox
 import src.geometry.geometry as geometry
 import src.geometry.markovQBox as QBox
+import src.display.plot as plot
 
 #os lib
 import subprocess
@@ -49,27 +50,13 @@ BBox.drawWithCategory(img, rois, ['blue','orange','white'])
 # %%
 
 allPoint = BBox.getAllPoints(np.copy(rois[:,1:]))
-
 hull = scipy.spatial.ConvexHull(allPoint.T)
-
-plt.scatter(allPoint[0,:], allPoint[1,:])
-
 p = allPoint.T[hull.vertices,:]
-plt.scatter(p.T[0,:], p.T[1,:])
-plt.plot(p[:, 0], p[:, 1])
-
 q = QBox.markovQuadFinder(p,10000)
-plt.scatter(q.T[0,:], q.T[1,:])
-plt.plot(q[:, 0], q[:, 1])
+qm = QBox.boundingQuadExtender(q,p)
 
-center = np.mean(p,axis=0)
-direction = q - center
+plot.displayBoudingQuad(allPoint,p,q,qm)
 
-qm = np.flip(q + direction*0.05, axis=0)
-
-plt.scatter(qm.T[0,:], qm.T[1,:])
-plt.plot(qm[:, 0], qm[:, 1])
-plt.show()
 # %%
 tform3, warped = geometry.perspectiveTransform(img,qm)
 

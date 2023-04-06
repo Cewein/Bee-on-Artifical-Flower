@@ -44,4 +44,9 @@ def markovQuadFinder(hullPoint: np.ndarray, iter=10000):
                 minArea = hull.area
                 saved = pointId[hull.vertices,:]
     
-    return saved
+    return np.flip(saved, axis=0)
+
+def boundingQuadExtender(quadPoint: np.ndarray, points: np.ndarray, alpha=0.05):
+    center = np.mean(points,axis=0)
+    direction = quadPoint - center
+    return quadPoint + direction*alpha
