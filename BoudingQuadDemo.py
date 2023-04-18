@@ -18,10 +18,10 @@ import shutil
 import matplotlib.pyplot as plt
 import numpy as np
 import scipy
-from itertools import combinations
+from skimage import transform
 
 # %% path to the data
-videoPath = "dataset/video/MAH00073.MP4"
+videoPath = "dataset/video/MAH00065.MP4"
 frameIndex = 200
 
 # create a tmp dir
@@ -58,7 +58,8 @@ qm = QBox.boundingQuadExtender(q,p)
 plot.displayBoudingQuad(allPoint,p,q,qm)
 
 # %%
-tform3, warped = geometry.perspectiveTransform(img,qm)
+tform3 = geometry.getPerspectiveTransform(img,qm)
+warped = transform.warp(img, tform3, output_shape=(500, 500))
 
 plt.imshow(img)
 plt.show()

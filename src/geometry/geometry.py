@@ -6,7 +6,7 @@ from skimage import transform
 
 from src.geometry import boundingBox
 
-def perspectiveTransform(img, points) -> transform.ProjectiveTransform:
+def getPerspectiveTransform(points) -> transform.ProjectiveTransform:
 
     if len(points)%4 != 0:
         raise Exception("There is more or less than 4 points")
@@ -15,9 +15,8 @@ def perspectiveTransform(img, points) -> transform.ProjectiveTransform:
 
     tform3 = transform.ProjectiveTransform()
     tform3.estimate(src, points)
-    warped = transform.warp(img, tform3, output_shape=(500, 500))
 
-    return tform3, warped
+    return tform3
 
 #tform3 must precalculated
 def getGridCornesFromPerspective(roiArray: np.ndarray, tform3: transform.ProjectiveTransform = None) -> np.ndarray:

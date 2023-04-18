@@ -1,6 +1,7 @@
 from matplotlib import patches, pyplot as plt
 import numpy as np
 
+
 def getBBoxCenter(bboxes: np.ndarray)-> np.ndarray:
     if bboxes.shape[1] != 4: raise Exception("bboxes must be with dim [n,4], n being the number of bbox")
 
@@ -110,3 +111,7 @@ def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, categories: list) -> No
         )
 
     plt.show()
+
+
+#get the bouding quad
+

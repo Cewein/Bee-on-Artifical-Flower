@@ -1,8 +1,11 @@
 #This file describe a way to find the best bouding quadrilate of a perspective warped grid
 from matplotlib import pyplot as plt
 import numpy as np
+import scipy
 from tqdm import tqdm
 from scipy.spatial import ConvexHull
+
+import src.geometry.boundingBox as BBox
 
 def validatedQuad(p11,p12,p21,p22):
     p, r = p11, p12 - p11
@@ -50,3 +53,10 @@ def boundingQuadExtender(quadPoint: np.ndarray, points: np.ndarray, alpha=0.05):
     center = np.mean(points,axis=0)
     direction = quadPoint - center
     return quadPoint + direction*alpha
+
+def boudingQuadFromROI(rois):
+    allPoint = BBox.getAllPoints(np.copy(rois[:,1:]))
+    hull = scipy.spatial.ConvexHull(allPoint.T)
+    p = allPoint.T[hull.vertices,:]
+    q = markovQuadFinder(p,10000)
+    return boundingQuadExtender(q,p)
