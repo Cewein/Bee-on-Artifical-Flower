@@ -34,7 +34,7 @@ img = video.openFrame(videoPath, frameIndex)
 plt.imsave("tmp/tmp.png", img)
 
 # yolov7 detection
-weigthPath = "../training/result/best.pt"
+weigthPath = "../training/result/best-bee-custom-v2.pt"
 dataPath = "../tmp/tmp.png"
 savePath = "../tmp/detect/"
 cmdStr = f"cd yolov7/ && python3 detect.py --weights {weigthPath} --project {savePath} --nosave --save-txt --conf 0.20 --img-size 640 --source {dataPath}"
@@ -47,23 +47,6 @@ rois = np.loadtxt("tmp/detect/exp/labels/tmp.txt")
 rois[:, 1:] = BBox.normSpaceToImgSpace(rois[:,1:],img)
 BBox.drawWithCategory(img, rois, ['blue','orange','white'])
 
-# %%
-
-allPoint = BBox.getAllPoints(np.copy(rois[:,1:]))
-hull = scipy.spatial.ConvexHull(allPoint.T)
-p = allPoint.T[hull.vertices,:]
-q = QBox.markovQuadFinder(p,10000)
-qm = QBox.boundingQuadExtender(q,p)
-
-plot.displayBoudingQuad(allPoint,p,q,qm)
-
-# %%
-tform3 = geometry.getPerspectiveTransform(qm)
-warped = transform.warp(img, tform3, output_shape=(500, 500))
-
-plt.imshow(img)
-plt.show()
-plt.imshow(warped)
 
 # %% clean up
 shutil.rmtree("tmp/")
