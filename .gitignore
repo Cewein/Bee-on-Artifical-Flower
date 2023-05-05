@@ -6,7 +6,7 @@ __pycache__/
 /INat
 /logs
 /out
-/dataset/video
+/dataset
 /tmp
 
 # C extensions

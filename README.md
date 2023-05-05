@@ -47,9 +47,11 @@ To be done.
 
 ## Training
 
-The training directory contains scripts and configuration files for training the YOLOv7 object detection model. The `train.sh` script can be used to train the model. 
+The training directory contains scripts and configuration files for training the YOLOv7 object detection model. The `train.sh` or `train.ps1` script can be used to train the model. 
 
 there is two mode for the traning: **p5** and **p6**. They used different version of YOLOv7, p5 is the default, p6 is q heavier version and migth not properly run.
+
+the training use transfer learning as a methode of training and can be bound to any existing database. here is only for a specific case.
 
 run this script from the root folder.
 
