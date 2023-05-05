@@ -28,7 +28,8 @@ videoPath = "dataset/video/MAH00031.MP4"
 frameIndex = 200 #set to -1 for full
 
 img = video.openFrame(videoPath, frameIndex)
-rois = yolo.detectFlowers(img)
+
+rois = yolo.detectInImage(img, "/home/cewein/GitHub/Bee-on-Artifical-Flower/training/result/best.pt")
 
 # %%
 boundingQuad = QBox.boudingQuadFromROI(rois)

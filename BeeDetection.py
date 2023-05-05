@@ -37,7 +37,7 @@ plt.imsave("tmp/tmp.png", img)
 weigthPath = "../training/result/best-bee-custom-v2.pt"
 dataPath = "../tmp/tmp.png"
 savePath = "../tmp/detect/"
-cmdStr = f"cd yolov7/ && python3 detect.py --weights {weigthPath} --project {savePath} --nosave --save-txt --conf 0.20 --img-size 640 --source {dataPath}"
+cmdStr = f"cd yolov7/ && python3 detect.py --weights {weigthPath} --project {savePath} --nosave --save-txt --conf 0.01 --img-size 640 --source {dataPath}"
 
 subprocess.run(cmdStr, shell=True)
 
@@ -45,7 +45,7 @@ subprocess.run(cmdStr, shell=True)
 
 rois = np.loadtxt("tmp/detect/exp/labels/tmp.txt")
 rois[:, 1:] = BBox.normSpaceToImgSpace(rois[:,1:],img)
-BBox.drawWithCategory(img, rois, ['blue','orange','white'])
+BBox.drawWithCategory(img, rois, ['bee'])
 
 
 # %% clean up

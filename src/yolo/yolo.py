@@ -10,7 +10,7 @@ import src.data.video as video
 import src.geometry.boundingBox as BBox
 
 
-def detectFlowers(img):
+def detectInImage(img, weigthPath):
     # Create a temporary directory
     if os.path.exists("tmp/"):
         shutil.rmtree("tmp/")
@@ -20,7 +20,6 @@ def detectFlowers(img):
     plt.imsave("tmp/tmp.png", img)
 
     # Perform object detection on the frame using YOLOv7
-    weigthPath = "../training/result/best.pt"
     dataPath = "../tmp/tmp.png"
     savePath = "../tmp/detect/"
     cmdStr = f"cd yolov7/ && python3 detect.py --weights {weigthPath} --project {savePath} --nosave --save-txt --conf 0.20 --img-size 640 --source {dataPath}"
