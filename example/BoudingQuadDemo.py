@@ -12,10 +12,11 @@ from skimage import transform
 
 #local
 import src.data.video as video
+import src.display.plot as plot
 import src.geometry.boundingBox as BBox
 import src.geometry.geometry as geometry
 import src.geometry.markovQBox as QBox
-import src.display.plot as plot
+
 
 def main(videoPath: str, frameIndex: int, weightPath: str) -> None:
     # Create a temporary directory to store intermediate files
@@ -29,8 +30,8 @@ def main(videoPath: str, frameIndex: int, weightPath: str) -> None:
     plt.imsave(f"{tmpDir}/tmp.png", img)
 
     # YOLOv7 detection
-    data_path = f"{tmpDir}/tmp.png"
-    save_path = f"{tmpDir}/detect/"
+    data_path = f"../{tmpDir}/tmp.png"
+    save_path = f"../{tmpDir}/detect/"
     cmd_str = (
         f"cd yolov7/ && python3 detect.py --weights {weightPath} "
         f"--project {save_path} --nosave --save-txt --conf 0.20 "
@@ -59,6 +60,7 @@ def main(videoPath: str, frameIndex: int, weightPath: str) -> None:
     plt.imshow(img)
     plt.show()
     plt.imshow(warped)
+    plt.show()
 
     # Clean up temporary directory
     shutil.rmtree(tmpDir)
