@@ -6,8 +6,8 @@ from matplotlib import pyplot as plt
 import numpy as np
 
 #local
-import src.data.video as video
-import src.geometry.boundingBox as BBox
+import src.python.data.video as video
+import src.python.geometry.boundingBox as BBox
 
 
 def detectInImage(img, weigthPath):
@@ -19,7 +19,7 @@ def detectInImage(img, weigthPath):
     # save img from the video
     plt.imsave("tmp/tmp.png", img)
 
-    # Perform object detection on the frame using YOLOv7
+    # Perform object detection on the frame using YOLOv7 
     dataPath = "../tmp/tmp.png"
     savePath = "../tmp/detect/"
     cmdStr = f"cd yolov7/ && python3 detect.py --weights {weigthPath} --project {savePath} --nosave --save-txt --conf 0.20 --img-size 640 --source {dataPath}"

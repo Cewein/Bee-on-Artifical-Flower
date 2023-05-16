@@ -4,18 +4,22 @@ import os
 import shutil
 import subprocess
 
+
 #external lib
 import matplotlib.pyplot as plt
 import numpy as np
 from scipy.spatial import ConvexHull
 from skimage import transform
 
+import sys
+sys.path.append('./src/python')
+
 #local
-import src.data.video as video
-import src.display.plot as plot
-import src.geometry.boundingBox as BBox
-import src.geometry.geometry as geometry
-import src.geometry.markovQBox as QBox
+import data.video as video
+import display.plot as plot
+import geometry.boundingBox as BBox
+import geometry.geometry as geometry
+import geometry.markovQBox as QBox
 
 
 def main(videoPath: str, frameIndex: int, weightPath: str) -> None:

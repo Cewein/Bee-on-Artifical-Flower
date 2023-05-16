@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 from skimage import transform
 
-from src.geometry import boundingBox
+from geometry import boundingBox
 
 def getPerspectiveTransform(points) -> transform.ProjectiveTransform:
 

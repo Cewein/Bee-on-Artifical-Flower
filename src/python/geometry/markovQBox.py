@@ -5,7 +5,7 @@ import scipy
 from tqdm import tqdm
 from scipy.spatial import ConvexHull
 
-import src.geometry.boundingBox as BBox
+from geometry import boundingBox
 
 def validatedQuad(p11,p12,p21,p22):
     p, r = p11, p12 - p11
@@ -55,7 +55,7 @@ def boundingQuadExtender(quadPoint: np.ndarray, points: np.ndarray, alpha=0.05):
     return quadPoint + direction*alpha
 
 def boudingQuadFromROI(rois):
-    allPoint = BBox.getAllPoints(np.copy(rois[:,1:]))
+    allPoint = boundingBox.getAllPoints(np.copy(rois[:,1:]))
     hull = scipy.spatial.ConvexHull(allPoint.T)
     p = allPoint.T[hull.vertices,:]
     q = markovQuadFinder(p,10000)

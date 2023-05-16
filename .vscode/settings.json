@@ -1,6 +1,9 @@
 {
     "python.analysis.typeCheckingMode": "off",
     "python.analysis.extraPaths": [
-        
-    ]
+        "/home/cewein/GitHub/Bee-on-Artifical-Flower/src/python"
+    ],
+    "files.associations": {
+        "iostream": "cpp"
+    }
 }
