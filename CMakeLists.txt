@@ -1,4 +1,13 @@
 cmake_minimum_required (VERSION 3.8)
+
+SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+SET(CMAKE_C_COMPILER_WORKS 1)
+SET(CMAKE_CXX_COMPILER_WORKS 1)
+SET(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+add_compile_options(-lstdc++fs)
+
 project ("BAF")
 
 find_package(OpenMP)
