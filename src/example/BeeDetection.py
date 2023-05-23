@@ -11,45 +11,10 @@ import sys
 sys.path.append('./src/python')
 
 #local
-import data.video as video
+import utils
 import geometry.boundingBox as BBox
 import geometry.geometry as geometry
-
-
-
-# Create temporary directory
-def createTmpDir(tmpDir):
-    if os.path.exists(tmpDir):
-        shutil.rmtree(tmpDir)
-    os.makedirs(tmpDir)
-
-# Remove temporary directory
-def removeTmpDir(tmpDir):
-    shutil.rmtree(tmpDir)
-
-# Save frame as image
-def saveFrameAsImage(videoPath, frameIndex, savePath):
-    img = video.openFrame(videoPath, frameIndex)
-    plt.imsave(savePath, img)
-
-# Run YOLOv7 detection
-def runYolov7Detection(weightPath, dataPath, savePath):
-    cmdStr = f"cd yolov7/ && python3 detect.py --weights {weightPath} --project ../{savePath} --save-txt --conf 0.20 --img-size 640 --source {dataPath}"
-    subprocess.run(cmdStr, shell=True)
-
-# Load detected regions of interest (ROIs)
-def loadROIs(filePath):
-    rois = np.loadtxt(filePath)
-    return rois
-
-# Normalize ROIs from normalized space to image space
-def normalizeROIs(rois, img):
-    rois[:, 1:] = BBox.normSpaceToImgSpace(rois[:, 1:], img)
-    return rois
-
-# Draw ROIs with categories on the image
-def drawROIsWithCategories(img, rois, categories):
-    BBox.drawWithCategory(img, rois, categories)
+import yolo
 
 if __name__ == "__main__":
 
@@ -61,17 +26,14 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(args)
-
     tmpImgPath = os.path.join(args.tmpDir, "tmp.png")
     detectDir = os.path.join(args.tmpDir, "detect/")
     
-
-    createTmpDir(args.tmpDir)
+    utils.createTmpDir(args.tmpDir)
 
     # Save frame as image or use direct path for an image
     if(args.frameIndex != None):
-        saveFrameAsImage(args.dataPath, args.frameIndex, tmpImgPath)
+        utils.saveFrameAsImage(args.dataPath, args.frameIndex, tmpImgPath)
     else:
         tmpImgPath = args.dataPath
 
@@ -79,12 +41,14 @@ if __name__ == "__main__":
     tmpLabelsPath = os.path.join(detectDir, f"exp/labels/{tmpFileName}.txt")
 
     # Run YOLOv7 detection
-    runYolov7Detection(args.weightPath, tmpImgPath, detectDir)
+    yolo.runYolov7Detection(args.weightPath, tmpImgPath, detectDir)
 
     # Load and process ROIs
-    rois = loadROIs(tmpLabelsPath)
+    id,bbox = yolo.loadResult(tmpLabelsPath)
     img = plt.imread(tmpImgPath)
-    rois = normalizeROIs(rois, img)
-    drawROIsWithCategories(img, rois, ['bee'])
+    bbox = BBox.normSpaceToImgSpace(bbox, img)
 
-    removeTmpDir(args.tmpDir)
+    # Draw ROIs with categories on the image
+    BBox.drawWithCategory(img, bbox, id, ['bee'])
+
+    utils.removeTmpDir(args.tmpDir)

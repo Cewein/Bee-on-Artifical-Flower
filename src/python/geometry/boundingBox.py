@@ -1,3 +1,4 @@
+import random
 from matplotlib import patches, pyplot as plt
 import numpy as np
 
@@ -73,7 +74,7 @@ def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, ids: np.ndarray, catego
     ax.imshow(img)
 
     if color == None:
-        color = plt.cm.get_cmap('hsv', len(np.unique(ids)))
+        color = ["#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)]) for i in range(len(np.unique(ids)))]
 
     for i in range(len(BBoxs)):
         
@@ -97,7 +98,3 @@ def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, ids: np.ndarray, catego
         )
 
     plt.show()
-
-
-#get the bouding quad
-

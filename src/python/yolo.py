@@ -1,21 +1,9 @@
+import os
 import subprocess
 
 import numpy as np
 
-# Run YOLOv7 detection
-def runYolov7Detection(weightPath, dataPath, savePath):
-    cmdStr = f"cd yolov7/ && python3 detect.py --weights {weightPath} --project ../{savePath} --save-txt --conf 0.20 --img-size 640 --source {dataPath}"
-    subprocess.run(cmdStr, shell=True)
-
-import os
-import subprocess
-
 def runYolov7Detection(weightPath, dataPath, savePath, confThreshold=0.20, imgSize=640, extraArgs=None):
-    # Validate input arguments
-    if not os.path.exists(weightPath):
-        raise ValueError("Invalid weightPath. File does not exist.")
-    if not os.path.exists(dataPath):
-        raise ValueError("Invalid dataPath. File or directory does not exist.")
     if extraArgs is None:
         extraArgs = []
 
