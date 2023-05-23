@@ -18,4 +18,4 @@ if (OPENMP_FOUND)
 endif()
 
 # Add source to this project's executable.
-add_executable (BAF "src/cpp/main.cpp" "src/cpp/default.h")
+add_executable (BAF "src/cpp/main.cpp")

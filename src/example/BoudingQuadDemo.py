@@ -71,7 +71,7 @@ def main(videoPath: str, frameIndex: int, weightPath: str) -> None:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process video with YOLOv7.")
+    parser = argparse.ArgumentParser(description="Detect fake flowers with YOLOv7.")
 
     parser.add_argument("videoPath", type=str, help="path to video file")
     parser.add_argument("frameIndex", type=int, help="index of frame to process")
