@@ -54,9 +54,20 @@ def boundingQuadExtender(quadPoint: np.ndarray, points: np.ndarray, alpha=0.05):
     direction = quadPoint - center
     return quadPoint + direction*alpha
 
-def boudingQuadFromROI(rois):
-    allPoint = boundingBox.getAllPoints(np.copy(rois[:,1:]))
-    hull = scipy.spatial.ConvexHull(allPoint.T)
-    p = allPoint.T[hull.vertices,:]
-    q = markovQuadFinder(p,10000)
-    return boundingQuadExtender(q,p)
+def boundingQuadFromBBOX(bbox, inter=10000):
+    # Get all points from the bounding boxes
+    allPoints = boundingBox.toPointInImageSpace(bbox).T
+
+    # Calculate the convex hull of the points
+    hull = scipy.spatial.ConvexHull(allPoints)
+
+    # Select the vertices of the convex hull
+    p = allPoints[hull.vertices, :]
+
+    # Find a validated quadrilateral using the Markov chain algorithm
+    q = markovQuadFinder(p, inter)
+
+    # Extend the quadrilateral towards the points for better coverage
+    extendedQuad = boundingQuadExtender(q, p)
+
+    return extendedQuad

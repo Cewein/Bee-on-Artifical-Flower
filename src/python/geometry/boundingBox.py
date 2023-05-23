@@ -12,7 +12,7 @@ def getBBoxCenter(bboxes: np.ndarray)-> np.ndarray:
     else:
         return bboxes[:,:2] + ((bboxes[:,2:] - bboxes[:,2:]) // 2)
     
-def getAllPoints(bboxes: np.ndarray)-> np.ndarray:
+def toPointInImageSpace(bboxes: np.ndarray)-> np.ndarray:
     if bboxes.shape[1] != 4: raise Exception("bboxes must be with dim [n,4], n being the number of bbox")
 
     #bbox is in mode XYWH
@@ -29,18 +29,6 @@ def getAllPoints(bboxes: np.ndarray)-> np.ndarray:
     allPoint =  np.hstack((allPoint, np.array([minXY[:,0],maxXY[:,1]])))
     
     return allPoint
-    
-#need to be in minmaxXY
-def getGridBBox(roiArray: np.ndarray) -> np.ndarray:
-    minXY = np.min(roiArray[:,:2], axis=0)
-    maxXY = np.max(roiArray[:,2:], axis=0)
-    cornersBbox = [[minXY[0],minXY[1]],
-               [maxXY[0],minXY[1]],
-               [maxXY[0],maxXY[1]],
-               [minXY[0],maxXY[1]]]
-    
-    return np.array(cornersBbox)
-
 
 ## change the definition of bouding box
 def XYWHtominmaxXY(BBoxArray: np.ndarray) -> np.ndarray:
@@ -76,7 +64,7 @@ def normSpaceToImgSpace(BBoxArray: np.ndarray, img: np.ndarray):
 
 ##### display function #####
 
-def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, categories: list) -> None:
+def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, ids: np.ndarray, categories: list, color=None) -> None:
 
     # Create figure and axes
     fig, ax = plt.subplots(figsize=(15, 15))
@@ -84,19 +72,17 @@ def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, categories: list) -> No
     # Display the image
     ax.imshow(img)
 
+    if color == None:
+        color = plt.cm.get_cmap('hsv', len(np.unique(ids)))
+
     for i in range(len(BBoxs)):
         
-        id = np.int32(BBoxs[i][0])
-        colors = ['b','orange','w']
+        id = ids[i]
 
-        w = BBoxs[i][3]
-        h = BBoxs[i][4]
-
-        x = BBoxs[i][1]
-        y = BBoxs[i][2]
+        x, y, w, h = BBoxs[i]
 
         # Create a Rectangle patch
-        rect = patches.Rectangle((x,y),w,h, linewidth=1, edgecolor=colors[id], facecolor='none')
+        rect = patches.Rectangle((x,y),w,h, linewidth=1, edgecolor=color[id], facecolor='none')
 
         # Add the patch to the Axes
         ax.add_patch(rect)
@@ -104,7 +90,7 @@ def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, categories: list) -> No
             x,
             y,
             categories[id],
-            bbox={"facecolor": colors[id], "alpha": 0.4},
+            bbox={"facecolor": color[id], "alpha": 0.4},
             clip_box=ax.clipbox, # type: ignore
             clip_on=True,
             fontsize='xx-small'

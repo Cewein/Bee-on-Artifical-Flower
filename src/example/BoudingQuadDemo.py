@@ -15,11 +15,11 @@ import sys
 sys.path.append('./src/python')
 
 #local
-import data.video as video
-import display.plot as plot
+import utils
 import geometry.boundingBox as BBox
 import geometry.geometry as geometry
 import geometry.markovQBox as QBox
+import yolo
 
 
 def main(dataPath: str, frameIndex: int, weightPath: str, tmpDir: str) -> None:
@@ -38,7 +38,7 @@ def main(dataPath: str, frameIndex: int, weightPath: str, tmpDir: str) -> None:
     # Save frame as image or use direct path for an image
     if(args.frameIndex != None):
         # Open and save a frame
-        img = video.openFrame(dataPath, frameIndex)
+        img = utils.openFrame(dataPath, frameIndex)
         plt.imsave(f"{tmpDir}/tmp.png", img)
     else:
         img = plt.imread(dataPath)
@@ -55,19 +55,20 @@ def main(dataPath: str, frameIndex: int, weightPath: str, tmpDir: str) -> None:
     )
     subprocess.run(cmd_str, shell=True)
 
-    # Display ROI
-    rois = np.loadtxt(tmpLabelsPath)
-    rois[:, 1:] = BBox.normSpaceToImgSpace(rois[:, 1:], img)
-    BBox.drawWithCategory(img, rois, ["blue", "orange", "white"])
+    # Display Bouding box
+    id, bbox = yolo.loadResult(tmpLabelsPath)
+
+    bbox = BBox.normSpaceToImgSpace(bbox, img)
+    BBox.drawWithCategory(img, bbox, id, ["Blue", "Orange", "White"], ["blue", "orange", "white"])
 
     # Find bounding quad
-    all_points = BBox.getAllPoints(np.copy(rois[:, 1:]))
-    hull = ConvexHull(all_points.T)
-    p = all_points.T[hull.vertices, :]
+    all_points = BBox.toPointInImageSpace(bbox).T
+    hull = ConvexHull(all_points)
+    p = all_points[hull.vertices, :]
     q = QBox.markovQuadFinder(p, 10000)
     qm = QBox.boundingQuadExtender(q, p)
 
-    plot.displayBoudingQuad(all_points, p, q, qm)
+    utils.displayBoudingQuad(all_points, p, q, qm)
 
     # Warp image
     tform3 = geometry.getPerspectiveTransform(qm)
