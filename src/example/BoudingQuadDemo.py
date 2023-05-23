@@ -22,29 +22,41 @@ import geometry.geometry as geometry
 import geometry.markovQBox as QBox
 
 
-def main(videoPath: str, frameIndex: int, weightPath: str) -> None:
+def main(dataPath: str, frameIndex: int, weightPath: str, tmpDir: str) -> None:
+
     # Create a temporary directory to store intermediate files
-    tmpDir = "tmp/"
     if os.path.exists(tmpDir):
         shutil.rmtree(tmpDir)
     os.makedirs(tmpDir)
 
-    # Open and save a frame
-    img = video.openFrame(videoPath, frameIndex)
-    plt.imsave(f"{tmpDir}/tmp.png", img)
+    # YOLOv7 temporary dir
+    tmpImgPath = f"../{tmpDir}/tmp.png"
+    save_path = f"{tmpDir}/detect/"
 
-    # YOLOv7 detection
-    data_path = f"../{tmpDir}/tmp.png"
-    save_path = f"../{tmpDir}/detect/"
+    img = None
+
+    # Save frame as image or use direct path for an image
+    if(args.frameIndex != None):
+        # Open and save a frame
+        img = video.openFrame(dataPath, frameIndex)
+        plt.imsave(f"{tmpDir}/tmp.png", img)
+    else:
+        img = plt.imread(dataPath)
+        tmpImgPath = dataPath
+
+    tmpFileName = os.path.splitext(os.path.basename(tmpImgPath))[0]
+    tmpLabelsPath = os.path.join(save_path, f"exp/labels/{tmpFileName}.txt")
+
+
     cmd_str = (
         f"cd yolov7/ && python3 detect.py --weights {weightPath} "
-        f"--project {save_path} --nosave --save-txt --conf 0.20 "
-        f"--img-size 640 --source {data_path}"
+        f"--project ../{save_path} --nosave --save-txt --conf 0.20 "
+        f"--img-size 640 --source {tmpImgPath}"
     )
     subprocess.run(cmd_str, shell=True)
 
     # Display ROI
-    rois = np.loadtxt(f"{tmpDir}/detect/exp/labels/tmp.txt")
+    rois = np.loadtxt(tmpLabelsPath)
     rois[:, 1:] = BBox.normSpaceToImgSpace(rois[:, 1:], img)
     BBox.drawWithCategory(img, rois, ["blue", "orange", "white"])
 
@@ -73,10 +85,11 @@ def main(videoPath: str, frameIndex: int, weightPath: str) -> None:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Detect fake flowers with YOLOv7.")
 
-    parser.add_argument("videoPath", type=str, help="path to video file")
-    parser.add_argument("frameIndex", type=int, help="index of frame to process")
-    parser.add_argument("weightPath", type=str, help="path to YOLOv7 weights file")
+    parser.add_argument("--dataPath", type=str, help="path to video or image file")
+    parser.add_argument("--frameIndex", type=int, help="index of frame to process", default=None)
+    parser.add_argument("--weightPath", type=str, help="path to YOLOv7 weights file", default="../training/result/best-fake-flower.pt")
+    parser.add_argument("--tmpDir", type=str, help="path to YOLOv7 weights file", default="tmp/")
 
     args = parser.parse_args()
 
-    main(args.videoPath, args.frameIndex, args.weightPath)
+    main(args.dataPath, args.frameIndex, args.weightPath, args.tmpDir)
