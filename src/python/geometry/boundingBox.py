@@ -74,7 +74,7 @@ def drawWithCategory(img: np.ndarray, BBoxs: np.ndarray, ids: np.ndarray, catego
     ax.imshow(img)
 
     if color == None:
-        color = ["#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)]) for i in range(len(np.unique(ids)))]
+        color = ["#"+''.join([random.choice('0123456789ABCDEF') for j in range(6)]) for i in range(64)]
 
     for i in range(len(BBoxs)):
         
