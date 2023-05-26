@@ -2,10 +2,10 @@ import argparse
 import subprocess
 import os
 
-import sys
 from matplotlib import pyplot as plt
-
 import numpy as np
+
+import sys
 sys.path.append('./src/python')
 
 #local
