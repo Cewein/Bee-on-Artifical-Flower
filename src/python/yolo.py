@@ -12,7 +12,7 @@ def runYolov7Detection(weightPath, dataPath, savePath, confThreshold=0.20, imgSi
     os.chdir(yolov7Dir)
 
     # Construct the command and arguments as a list of strings
-    cmd = ["python3","detect.py","--weights",weightPath,"--project",f"../{savePath}","--save-txt",
+    cmd = ["python","detect.py","--weights",weightPath,"--project",f"{savePath}","--save-txt",
         "--conf",str(confThreshold),"--img-size",str(imgSize),"--source",dataPath]
 
     # Add additional command-line arguments if provided

@@ -33,6 +33,9 @@ if __name__ == "__main__":
     
     utils.createTmpDir(args.tmpDir)
 
+    print(tmpImgPath)
+    print(detectDir)
+
     # Save frame as image or use direct path for an image
     if(args.frameIndex != None):
         utils.saveFrameAsImage(args.dataPath, args.frameIndex, tmpImgPath)
